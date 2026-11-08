@@ -1,0 +1,9 @@
+{
+  "name": "Cap",
+  "short_name": "Cap Server",
+  "description": "Cap, the open-source Loom alternative: record, share, comment",
+  "category": "Other",
+  "image": "https://raw.githubusercontent.com/two-workspaces/cap/main/icon.svg",
+  "card_desc": "Cap, the open-source Loom alternative: record your screen from the Cap app, Chrome extension or browser and share a link. Videos in a Railway bucket, MySQL, and Cap's media server, with sign-in limited to whoever reads the logs until you add email.",
+  "deploy_marker": "two-workspaces/cap"
+}

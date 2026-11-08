@@ -1,0 +1,220 @@
+{
+  "buckets": {
+    "58d57771-5899-420f-baba-9bbee929c935": {
+      "name": "cap-videos"
+    }
+  },
+  "services": {
+    "34531a8c-508b-4d4f-8c5f-bcdd20fc6c57": {
+      "icon": "https://raw.githubusercontent.com/two-workspaces/cap/main/icon.svg",
+      "name": "Cap",
+      "deploy": {
+        "startCommand": null,
+        "healthcheckPath": "/api/status",
+        "restartPolicyType": "ON_FAILURE",
+        "restartPolicyMaxRetries": 10
+      },
+      "source": {
+        "repo": "https://github.com/two-workspaces/cap",
+        "rootDirectory": null
+      },
+      "variables": {
+        "PORT": {
+          "defaultValue": "3000",
+          "description": "Port Cap listens on - leave as is",
+          "isOptional": false
+        },
+        "WEB_URL": {
+          "defaultValue": "https://${{RAILWAY_PUBLIC_DOMAIN}}",
+          "description": "Cap's public URL, used in share links - set it to your custom domain when you add one",
+          "isOptional": false
+        },
+        "NEXTAUTH_URL": {
+          "defaultValue": "${{WEB_URL}}",
+          "description": "Sign-in callback URL - leave as is",
+          "isOptional": false
+        },
+        "NEXTAUTH_SECRET": {
+          "defaultValue": "${{secret(64, \"0123456789abcdef\")}}",
+          "description": "Signs sessions - auto-generated, keep it secret",
+          "isOptional": false
+        },
+        "DATABASE_ENCRYPTION_KEY": {
+          "defaultValue": "${{secret(64, \"0123456789abcdef\")}}",
+          "description": "Encrypts stored secrets in MySQL - auto-generated, never change it",
+          "isOptional": false
+        },
+        "DATABASE_URL": {
+          "defaultValue": "${{MySQL.MYSQL_URL}}",
+          "description": "MySQL - private network, leave as is",
+          "isOptional": false
+        },
+        "MEDIA_SERVER_URL": {
+          "defaultValue": "http://${{media-server.RAILWAY_PRIVATE_DOMAIN}}:3456",
+          "description": "Media server - private network, leave as is",
+          "isOptional": false
+        },
+        "MEDIA_SERVER_WEBHOOK_URL": {
+          "defaultValue": "http://${{RAILWAY_PRIVATE_DOMAIN}}:3000",
+          "description": "Where the media server reports finished jobs - private network, leave as is",
+          "isOptional": false
+        },
+        "MEDIA_SERVER_WEBHOOK_SECRET": {
+          "defaultValue": "${{secret(64, \"0123456789abcdef\")}}",
+          "description": "Shared with the media server - auto-generated, keep it secret",
+          "isOptional": false
+        },
+        "CAP_AWS_BUCKET": {
+          "defaultValue": "${{cap-videos.BUCKET}}",
+          "description": "Recordings go to the cap-videos bucket - leave as is",
+          "isOptional": false
+        },
+        "CAP_AWS_REGION": {
+          "defaultValue": "${{cap-videos.REGION}}",
+          "description": "Bucket region - leave as is",
+          "isOptional": false
+        },
+        "CAP_AWS_ACCESS_KEY": {
+          "defaultValue": "${{cap-videos.ACCESS_KEY_ID}}",
+          "description": "Bucket key - leave as is",
+          "isOptional": false
+        },
+        "CAP_AWS_SECRET_KEY": {
+          "defaultValue": "${{cap-videos.SECRET_ACCESS_KEY}}",
+          "description": "Bucket secret - leave as is",
+          "isOptional": false
+        },
+        "S3_PUBLIC_ENDPOINT": {
+          "defaultValue": "${{cap-videos.ENDPOINT}}",
+          "description": "Bucket endpoint for browsers and apps - leave as is",
+          "isOptional": false
+        },
+        "S3_INTERNAL_ENDPOINT": {
+          "defaultValue": "${{cap-videos.ENDPOINT}}",
+          "description": "Bucket endpoint for Cap itself - leave as is",
+          "isOptional": false
+        },
+        "S3_PATH_STYLE": {
+          "defaultValue": "false",
+          "description": "Railway buckets use virtual-hosted URLs - leave as is",
+          "isOptional": false
+        },
+        "CAP_CHROME_EXTENSION_ID": {
+          "defaultValue": "fefjaffcodfiogbbngmjkcjpbpclbdcp",
+          "description": "Lets Cap's Chrome extension sign in to this server - leave as is",
+          "isOptional": false
+        },
+        "RESEND_API_KEY": {
+          "defaultValue": "",
+          "description": "Optional. Resend API key for login-code emails. Without it, codes are printed in this service's logs, so only you can sign in.",
+          "isOptional": true
+        },
+        "RESEND_FROM_DOMAIN": {
+          "defaultValue": "",
+          "description": "Optional. Domain verified in Resend that login emails come from",
+          "isOptional": true
+        },
+        "CAP_ALLOWED_SIGNUP_DOMAINS": {
+          "defaultValue": "",
+          "description": "Optional. Comma-separated email domains allowed to create accounts once email works, e.g. yourcompany.com",
+          "isOptional": true
+        }
+      },
+      "networking": {
+        "serviceDomains": {
+          "<hasDomain>": {}
+        },
+        "tcpProxies": {}
+      },
+      "volumeMounts": {
+        "86fe7e53-9d5f-4fb1-b3ce-dbbda65776f2": {
+          "mountPath": "/data"
+        }
+      }
+    },
+    "06696177-81f9-4160-b811-ea4523552819": {
+      "icon": "https://raw.githubusercontent.com/two-workspaces/cap/main/icon.svg",
+      "name": "media-server",
+      "deploy": {
+        "startCommand": null,
+        "healthcheckPath": "/health",
+        "restartPolicyType": "ON_FAILURE",
+        "restartPolicyMaxRetries": 10
+      },
+      "source": {
+        "repo": "https://github.com/two-workspaces/cap",
+        "rootDirectory": "/media-server"
+      },
+      "variables": {
+        "PORT": {
+          "defaultValue": "3456",
+          "description": "Port the media server listens on - leave as is",
+          "isOptional": false
+        },
+        "MEDIA_SERVER_WEBHOOK_SECRET": {
+          "defaultValue": "${{Cap.MEDIA_SERVER_WEBHOOK_SECRET}}",
+          "description": "Shared with Cap - leave as is",
+          "isOptional": false
+        },
+        "MEDIA_SERVER_WEB_ORIGIN": {
+          "defaultValue": "${{Cap.WEB_URL}}",
+          "description": "Cap's URL, for files Cap serves itself - leave as is",
+          "isOptional": false
+        }
+      },
+      "networking": {
+        "serviceDomains": {},
+        "tcpProxies": {}
+      }
+    },
+    "7aa92f37-9133-4b62-ad96-bda529958a70": {
+      "icon": "https://www.mysql.com/common/logos/logo-mysql-170x115.png",
+      "name": "MySQL",
+      "deploy": {
+        "startCommand": "docker-entrypoint.sh mysqld --datadir=/var/lib/mysql/data --max_connections=1000 --character-set-server=utf8mb4 --collation-server=utf8mb4_unicode_ci --performance-schema=OFF",
+        "healthcheckPath": null,
+        "restartPolicyType": "ON_FAILURE",
+        "restartPolicyMaxRetries": 10
+      },
+      "source": {
+        "image": "mysql:8.0.46"
+      },
+      "variables": {
+        "MYSQL_DATABASE": {
+          "defaultValue": "cap",
+          "description": "Database name - leave as is",
+          "isOptional": false
+        },
+        "MYSQL_USER": {
+          "defaultValue": "cap",
+          "description": "Database user - leave as is",
+          "isOptional": false
+        },
+        "MYSQL_PASSWORD": {
+          "defaultValue": "${{secret(32)}}",
+          "description": "Database password - auto-generated",
+          "isOptional": false
+        },
+        "MYSQL_ROOT_PASSWORD": {
+          "defaultValue": "${{secret(32)}}",
+          "description": "Root password - auto-generated",
+          "isOptional": false
+        },
+        "MYSQL_URL": {
+          "defaultValue": "mysql://${{MYSQL_USER}}:${{MYSQL_PASSWORD}}@${{RAILWAY_PRIVATE_DOMAIN}}:3306/${{MYSQL_DATABASE}}",
+          "description": "Connection URL for Cap - private network, leave as is",
+          "isOptional": false
+        }
+      },
+      "networking": {
+        "serviceDomains": {},
+        "tcpProxies": {}
+      },
+      "volumeMounts": {
+        "bfb3296b-0e99-4ded-9493-b39a503f91ae": {
+          "mountPath": "/var/lib/mysql"
+        }
+      }
+    }
+  }
+}
