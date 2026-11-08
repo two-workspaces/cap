@@ -16,6 +16,10 @@ if [ -n "$SDK" ] && [ -n "$CAP_AWS_BUCKET" ]; then
   AWS_SDK_PATH="$SDK" node /railway/bucket-cors.mjs || echo "railway: bucket CORS not set"
 fi
 
+# Migrate before listening, so the healthcheck waits for the schema. On a
+# failure Cap's own migration (which also runs its backfills) gets its turn.
+su-exec nextjs node /railway/railway-migrate.mjs || echo "railway: pre-start migration failed; Cap will retry"
+
 # Railway's private network is IPv6: listen on all addresses so the media
 # server can call back.
 export HOSTNAME="::"
